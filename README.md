@@ -1,6 +1,6 @@
 # ONS GB Shoreline and related work
 
-## This page contains an outline of how ONS Geospatial has:
+### This page contains an outline of how ONS Geospatial has:
 *	Defined and created a GB shoreline
 *	Buffered GB shoreline
 *	Identified Built Up Areas (2022) that intersect GB shoreline
@@ -33,7 +33,7 @@
     -	Assigned as tidal land in ‘Land’ from OS Select+Build and touch selected tidal water features
 *	The areas of sea, tidal water and tidal land that are used for the ‘cookie-cutting’ are selected using an automated processes run in R. The commented code explains the process step-by-step. It also includes commentary as to why certain steps were necessary and how certain areas were included/excluded.
 
-##	Buffer GB shoreline
+## Buffer GB shoreline
 * Due to the complexities of the GB shoreline geometry, running a simple buffer (e.g. `geos_buffer` or `st_buffer` in R) on the whole dataset can take a long time to complete.
 * Instead of buffering the entire dataset, it is chunked by 10km OS grid tiles. So rather than buffering one very complex polyline it buffers multiple simpler polylines.
 * A polyline version of the shoreline is used for the majority of the buffering. However, the polygon version if used for objects smaller than the minimum size of the buffer. This is because `geos_buffer` and `st_buffer` both struggle to buffer polyline features that are smaller than the minimum area of a possible buffer.
