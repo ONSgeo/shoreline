@@ -17,8 +17,8 @@ GB_Shoreline <- st_read("[ADD_DATA_LOCATION_HERE]")
 ### Why? This is to prevent possible longer computation time that using s2 (rather than GEOS) can cause
 sf_use_s2(FALSE)
 
-# Specifiy buffer size in metres to be used
-### Why? As Built Up Areas are made of 25m grid cells they will not allign perfectly with the GB Shoreline.
+# Specify buffer size in metres to be used
+### Why? As Built Up Areas are made of 25m grid cells they will not align perfectly with the GB Shoreline.
 ### The buffer is used to make the shoreline wider, enabling more consistent and realistic intersections with Built Up Areas
 Buffer_Size <- 50
 
@@ -27,32 +27,32 @@ GB_Shoreline_with_Area <- GB_Shoreline %>%
 	st_cast("POLYGON") %>%
 	mutate(Area_m2 = as.numeric(st_area(.)))
 
-# Buffer 'GB_Shoreline_with_Area' features by 'Buffer_Size' if they have areas less than what the minumum area of a feature buffered by the 'Buffer_Size' value would have
-### Why? 'geos_buffer' and 'st_buffer' both struggle to buffer polyline features that are smaller than the minumum area of a possible buffer
+# Buffer 'GB_Shoreline_with_Area' features by 'Buffer_Size' if they have areas less than what the minimum area of a feature buffered by the 'Buffer_Size' value would have
+### Why? 'geos_buffer' and 'st_buffer' both struggle to buffer polyline features that are smaller than the minimum area of a possible buffer
 GB_Shoreline_Polygon_Buffer <- GB_Shoreline_with_Area %>%
 	filter(Area_m2 < pi*((Buffer_Size+1)^2)) %>%
 	geos_buffer(., Buffer_Size) 
 
-# Filter 'GB_Shoreline_with_Area' features that have areas greater than the minumum area possible when buffered by the 'Buffer_Size', merge together and cast as polyline
-paste0("Stated: ", Sys.time(), " - takes 2 mintutes")
+# Filter 'GB_Shoreline_with_Area' features that have areas greater than the minimum area possible when buffered by the 'Buffer_Size', merge together and cast as polyline
+paste0("Stated: ", Sys.time(), " - takes 2 minutes")
 GB_Shoreline_Polyline_Filter <- GB_Shoreline_with_Area %>%
 	filter(Area_m2 >= pi*((Buffer_Size+1)^2)) %>%
 	st_union(.) %>%
 	st_cast(.,"MULTILINESTRING")	
 
 # Intersect 'GB_Shoreline_Polyline_Filter' with 'OS_Grid_10k_Tiles_UK'
-### Why? This speeds up the next process (buffering). Rather than buffer one very complex polyline it buffers multiple simplier polylines
-paste0("Stated: ", Sys.time(), " - takes 6 mintutes")
+### Why? This speeds up the next process (buffering). Rather than buffer one very complex polyline it buffers multiple simpler polylines
+paste0("Stated: ", Sys.time(), " - takes 6 minutes")
 GB_Shoreline_Polyline_10k_Tiles <- GB_Shoreline_Polyline_Filter %>%
 	st_intersection(., OS_Grid_10k_Tiles_UK) 
 
 # Buffer 'GB_Shoreline_Polyline_10k_Tiles' features by 'Buffer_Size'
-paste0("Stated: ", Sys.time(), " - takes 8 mintutes")
+paste0("Stated: ", Sys.time(), " - takes 8 minutes")
 GB_Shoreline_Polyline_Buffer <- GB_Shoreline_Polyline_10k_Tiles %>%
 	geos_buffer(.,Buffer_Size) 
 
 # Join 'GB_Shoreline_Polyline_Buffer' and 'GB_Shoreline_Polygon_Buffer' to create single buffered polygon of GB Shoreline
-paste0("Stated: ", Sys.time(), " - takes 5 mintutes")
+paste0("Stated: ", Sys.time(), " - takes 5 minutes")
 GB_Shoreline_Buffer <- bind_rows(
 		GB_Shoreline_Polyline_Buffer %>% st_as_sfc(.) %>% st_sf(), 
 		GB_Shoreline_Polygon_Buffer %>% st_as_sfc(.) %>% st_sf()) %>%
@@ -61,8 +61,8 @@ GB_Shoreline_Buffer <- bind_rows(
 	st_as_sfc(.)
 
 # Cast 'GB_Shoreline_Buffer' from multipolygon object to individual polygons and intersect with 'OS_Grid_10k_Tiles_UK'
-### Why? This speeds up the next process (intersection). Rather than intersect one very complex polyline it intersects multiple simplier polylines
-paste0("Stated: ", Sys.time(), " - takes 45 mintutes")
+### Why? This speeds up the next process (intersection). Rather than intersect one very complex polyline it intersects multiple simpler polylines
+paste0("Stated: ", Sys.time(), " - takes 45 minutes")
 GB_Shoreline_Buffer_Polygon <- GB_Shoreline_Buffer %>%
 	st_cast("POLYGON") %>%
 	st_intersection(., OS_Grid_10k_Tiles_UK) 
@@ -75,7 +75,7 @@ BUA_Polylines <- BUAs %>%
 # Merge BUAs that touch into single features, cast this output as single polygons and covert to polylines
 # Intersect this output with 'GB_Shoreline_Buffer_Polygon' to select only the parts of polylines that intersect with the shoreline
 ### Why? Merging touching BUAs avoids any small parts of shared BUA borders being incorrectly identified as being on the shoreline due when intersected 
-paste0("Stated: ", Sys.time(), " - takes 5 mintutes")
+paste0("Stated: ", Sys.time(), " - takes 5 minutes")
 BUA_Union_Shoreline_Intersection <- BUAs %>%
 	summarise(geometry = st_union(geom)) %>%
 	st_cast(.,"POLYGON") %>%
@@ -96,7 +96,7 @@ BUA_Shorelines <- BUA_Polylines %>%
 	st_sf()
 
 # Subtract 'BUA_Shorelines' from 'BUA_Polylines' to generate polylines for the inland component of BUAs. Then create a number of summary statistics
-paste0("Stated: ", Sys.time(), " - takes 1 hour 15 mintutes")
+paste0("Stated: ", Sys.time(), " - takes 1 hour 15 minutes")
 BUA_Inland <- BUA_Polylines %>%
 	st_difference(., st_union(BUA_Shorelines)) %>%
 	mutate(BUA_Inland_KM = as.numeric(st_length(.)/ 1000)) %>%
@@ -123,7 +123,7 @@ Excel_WB <- list("BUAs_Shoreline_Data" = BUA_Shorelines_Table,
 				"BUAs_Inland_Data" = BUA_Inland_Table)
 				
 # Export Excel workbook
-write_xlsx(Excel_WB, "//[DIRECTORY_PATH]/BUA_Shoreline_and_Inland_Data_June_2023.xlsx")
+write_xlsx(Excel_WB, "[DIRECTORY_PATH]/BUA_Shoreline_and_Inland_Data_June_2023.xlsx")
 
 # Export polyline outputs
 st_write(BUA_Shorelines, paste0("[DIRECTORY_PATH]/BUA_Shoreline_Intersection_Polyline.gpkg"))
