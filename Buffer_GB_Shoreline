@@ -12,8 +12,8 @@ library(dplyr) # version 1.1.2 used
 library(geos) # version 0.2.2 used
 
 # Read in input data
-OS_Grid_10k_Tiles_UK <- st_read("//tgeog2/psma/Shoreline/Input_Data/OS_National_Grid_10km_UK_and_Islands.gpkg")
-GB_Shoreline <- st_read("//tgeog2/psma/Shoreline/Output/GB_Shoreline_June_2023.gpkg")
+OS_Grid_10k_Tiles_UK <- st_read("[ADD_DATA_LOCATION_HERE]")
+GB_Shoreline <- st_read("[ADD_DATA_LOCATION_HERE]")
 
 # Select buffer size in metres
 Buffer_Size <- 5000
@@ -64,4 +64,4 @@ GB_Shoreline_Buffer <- bind_rows(GB_Shoreline_Polyline_Buffer %>% st_as_sfc(.) %
 paste0("Time taken to finish: ", round(difftime(Sys.time(), Start, units='mins'),2)," minutes")
 
 # Export outputs
-st_write(GB_Shoreline_Buffer, paste0("//tgeog2/psma/Shoreline/Output/GB_Shoreline_June_2023_",Buffer_Size_KM,"km_Buffer.gpkg"))
+st_write(GB_Shoreline_Buffer, paste0("[DIRECTORY_PATH]/GB_Shoreline_June_2023_",Buffer_Size_KM,"km_Buffer.gpkg"))
