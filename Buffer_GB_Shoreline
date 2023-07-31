@@ -7,9 +7,9 @@
 ### Takes 30 minutes to do 500 metre buffer and 10 minutes to do 5km buffer on Intel Core i5-6500T @ 2.50GHz with 32GB RAM
 
 # Required libraries
-library(sf)
-library(tidyverse)
-library(geos)
+library(sf) # version 1.0.12 used
+library(dplyr) # version 1.1.2 used
+library(geos) # version 0.2.2 used
 
 # Read in input data
 OS_Grid_10k_Tiles_UK <- st_read("[ADD_DATA_LOCATION_HERE]")
