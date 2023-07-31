@@ -340,8 +340,8 @@ GB_Shoreline_Polyline <- GB_Shoreline %>%
 	st_cast(.,"MULTILINESTRING")
 
 # Export outputs
-st_write(GB_Shoreline, paste0("[DIRECTORY_PATH]",OS_Data_Month_Year,".gpkg"))
-st_write(GB_Shoreline_Polyline, paste0("[DIRECTORY_PATH]",OS_Data_Month_Year,".gpkg"))
+st_write(GB_Shoreline, paste0("[DIRECTORY_PATH]/GB_Shoreline_",OS_Data_Month_Year,".gpkg"))
+st_write(GB_Shoreline_Polyline, paste0("[DIRECTORY_PATH]/GB_Shoreline_Polyline_",OS_Data_Month_Year,".gpkg"))
 
 End_Time <- Sys.time()
 
