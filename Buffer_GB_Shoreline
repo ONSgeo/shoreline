@@ -12,11 +12,11 @@ library(dplyr) # version 1.1.2 used
 library(geos) # version 0.2.2 used
 
 # Read in input data
-OS_Grid_10k_Tiles_UK <- st_read("[ADD_DATA_LOCATION_HERE]")
-GB_Shoreline <- st_read("[ADD_DATA_LOCATION_HERE]")
+OS_Grid_10k_Tiles_UK <- st_read("//tgeog2/psma/Shoreline/Input_Data/OS_National_Grid_10km_UK_and_Islands.gpkg")
+GB_Shoreline <- st_read("//tgeog2/psma/Shoreline/Output/GB_Shoreline_June_2023.gpkg")
 
 # Select buffer size in metres
-Buffer_Size <- 500
+Buffer_Size <- 5000
 
 # Convert buffer size to kilometres
 Buffer_Size_KM <- Buffer_Size/1000
@@ -28,14 +28,14 @@ GB_Shoreline_with_Area <- GB_Shoreline %>%
 	st_cast("POLYGON") %>%
 	mutate(Area_m2 = as.numeric(st_area(.)))
 
-# Buffer 'GB_Shoreline_with_Area' features by 'Buffer_Size' if they have areas less than what the minumum area of a feature buffered by the 'Buffer_Size' value would have
-### Why? 'geos_buffer' and 'st_buffer' both struggle to buffer polyline features that are smaller than the minumum area of a possible buffer
+# Buffer 'GB_Shoreline_with_Area' features by 'Buffer_Size' if they have areas less than what the minimum area of a feature buffered by the 'Buffer_Size' value would have
+### Why? 'geos_buffer' and 'st_buffer' both struggle to buffer polyline features that are smaller than the minimum area of a possible buffer
 paste0("Time taken so far: ", round(difftime(Sys.time(), Start, units='mins'),2)," minutes")
 GB_Shoreline_Polygon_Buffer <- GB_Shoreline_with_Area %>%
 	filter(Area_m2 < pi*((Buffer_Size+1)^2)) %>%
 	geos_buffer(., Buffer_Size) 
 
-# Filter 'GB_Shoreline_with_Area' features that have areas greater than the minumum area possible when buffered by the 'Buffer_Size', merge together and cast as polyline
+# Filter 'GB_Shoreline_with_Area' features that have areas greater than the minimum area possible when buffered by the 'Buffer_Size', merge together and cast as polyline
 paste0("Time taken so far: ", round(difftime(Sys.time(), Start, units='mins'),2)," minutes")	
 GB_Shoreline_Polyline_Filter <- GB_Shoreline_with_Area %>%
 	filter(Area_m2 >= pi*((Buffer_Size+1)^2)) %>%
@@ -43,7 +43,7 @@ GB_Shoreline_Polyline_Filter <- GB_Shoreline_with_Area %>%
 	st_cast(.,"MULTILINESTRING")	
 
 # Intersect 'GB_Shoreline_Polyline_Filter' with 'OS_Grid_10k_Tiles_UK'
-### Why? This speeds up the next process (buffering). Rather than buffer one very complex polyline it buffers multiple simplier polylines
+### Why? This speeds up the next process (buffering). Rather than buffer one very complex polyline it buffers multiple simpler polylines
 paste0("Time taken so far: ", round(difftime(Sys.time(), Start, units='mins'),2)," minutes")
 GB_Shoreline_Polyline_10k_Tiles <- GB_Shoreline_Polyline_Filter %>%
 	st_intersection(., OS_Grid_10k_Tiles_UK) 
@@ -64,4 +64,4 @@ GB_Shoreline_Buffer <- bind_rows(GB_Shoreline_Polyline_Buffer %>% st_as_sfc(.) %
 paste0("Time taken to finish: ", round(difftime(Sys.time(), Start, units='mins'),2)," minutes")
 
 # Export outputs
-st_write(GB_Shoreline_Buffer, paste0("[DIRECTORY_PATH]/GB_Shoreline_June_2023_",Buffer_Size_KM,"km_Buffer.gpkg"))
+st_write(GB_Shoreline_Buffer, paste0("//tgeog2/psma/Shoreline/Output/GB_Shoreline_June_2023_",Buffer_Size_KM,"km_Buffer.gpkg"))
