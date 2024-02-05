@@ -44,5 +44,5 @@
 *	This allows the following outputs to be created for all Built Up Areas that touch the GB shoreline:
     - 'BUA_Perimeter_KM' is the total perimeter in kilometres of the Built Up Area
     - 'BUA_Shoreline_KM' is length of each Built Up Area's perimeter that intersects the GB shoreline
-    - 'BUA_Shoreline_PCT' is the percentage of how much each Built Up Area's perimeter intersects the GB shoreline
+    - 'BUA_Shoreline_PCT' is the percentage of each Built Up Area's perimeter that intersects the GB shoreline
 
