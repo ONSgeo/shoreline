@@ -10,8 +10,11 @@ library(writexl) # version 1.4.2 used
 
 # Read in input data
 OS_Grid_10k_Tiles_UK <- st_read("[ADD_DATA_LOCATION_HERE]")
-BUAs <- st_read("[ADD_DATA_LOCATION_HERE]")
-GB_Shoreline <- st_read("[ADD_DATA_LOCATION_HERE]")
+BUAs <- st_read("[ADD_DATA_LOCATION_HERE]") # Input Built Up Areas data
+GB_Shoreline <- st_read("[ADD_DATA_LOCATION_HERE]") # Input GB_shoreline_XX.gpkg data created in the 'Create_GB_shoreline.R' file
+
+# Rename some field names to ensure consistency regardless of differing versions of input data
+colnames(BUAs)[which(colnames(BUAs) =="[ADD_NAME_OF_SHAPE_GEOMETRY_FIELD_HERE]")] <- “geom”
 
 # Set to 'False' as input data uses a projected coordinate system (rather than a geographic coordinate system)
 ### Why? This is to prevent possible longer computation time that using s2 (rather than GEOS) can cause
