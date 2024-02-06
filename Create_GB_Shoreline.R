@@ -10,15 +10,18 @@ library(stringr) # version 1.5.0 used
 
 # Read in input data 
 OS_Grid_1km_Tiles_UK <- st_read("[ADD_DATA_LOCATION_HERE]")
-GB_BFE <- st_read("[ADD_DATA_LOCATION_HERE]")
-GB_BFC <- st_read("[ADD_DATA_LOCATION_HERE]")
-BUAs <- st_read("[ADD_DATA_LOCATION_HERE]")
-Water <- st_read("[ADD_DATA_LOCATION_HERE]")
+GB_BFE <- st_read("[ADD_DATA_LOCATION_HERE]") # Loads in country data (full resolution extent of the realm, i.e., low water mark)
+GB_BFC <- st_read("[ADD_DATA_LOCATION_HERE]") # Loads in country data (clipped to the coastline, i.e., high water mark)
+BUAs <- st_read("[ADD_DATA_LOCATION_HERE]") # Loads in Built Up Areas data
+Water <- st_read("[ADD_DATA_LOCATION_HERE]") # Loads in water data
 Land_Tidal <- st_read(dsn = paste0("[ADD_DATA_LOCATION_HERE]"),
-                  query = "select * from lnd_fts_land where istidal = TRUE")
+                  query = "select * from lnd_fts_land_tidal where istidal = TRUE") # Loads in land dataset, filtered to tidal
  
 # Enter the month and year of the Ordnance Survey data (Water and Land_Tidal) used
 OS_Data_Month_Year <- "June_2023"
+
+# Rename some field names to ensure consistency regardless of differing versions of input data
+colnames(OS_Grid_1km_Tiles_UK)[which(colnames(OS_Grid_1km_Tiles_UK) =="[ADD_NAME_OF_GRID_REF_FIELD_HERE ]")] <- “OS_Grid_Reference”
  
 Start_Time <- Sys.time() 
 Start_Time
