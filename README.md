@@ -40,7 +40,7 @@
 
 ## Identify Built Up Areas (2022) that intersect GB shoreline
 *	As Built Up Areas are constructed from 25 metre grid squares, edges that would be considered touching the shoreline do not always intersect with it.
-*	As such, a buffer is used to make the shoreline wider, enabling more consistent and realistic intersections with Built Up Areas.
+*	As such, a buffer is used to make the shoreline wider, enabling more consistent and realistic intersections with Built Up Areas. Width of buffer can be edited based on user requirement. 
 *	This allows the following outputs to be created for all Built Up Areas that touch the GB shoreline:
     - 'BUA_Perimeter_KM' is the total perimeter in kilometres of the Built Up Area
     - 'BUA_Shoreline_KM' is length of each Built Up Area's perimeter that intersects the GB shoreline
